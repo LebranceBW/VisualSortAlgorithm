@@ -28,16 +28,14 @@ public class SortMain
 		    	
 		Task<Void> sleeper = new Task<Void>()
 			{
-
 				@Override
 				protected Void call() throws Exception {
 					// 可视化的冒泡算法
-//					bubbleSortAlgorithm(lst);
+					Algorithm.bubbleSortAlgorithm(lst);
 //					Algorithm.selectSortAlgorithm(lst);
-					Algorithm.quickSortAlgorithm(lst);
+//					Algorithm.quickSortAlgorithm(lst);
 					return null;
 				}
-		
 			};
 		new Thread(sleeper).start();
 		

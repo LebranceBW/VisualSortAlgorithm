@@ -7,13 +7,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
    <children>
-      <Canvas fx:id="canvas" height="600.0" width="900.0" />
-      <VBox prefWidth="100.0">
-         <children>
-            <ChoiceBox prefWidth="150.0" />
-         </children>
-      </VBox>
+      <Canvas fx:id="canvas" height="600.0" width="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
-</HBox>
+</AnchorPane>
