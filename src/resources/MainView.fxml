@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+   <children>
+      <Canvas fx:id="canvas" height="600.0" width="900.0" />
+      <VBox prefWidth="100.0">
+         <children>
+            <ChoiceBox prefWidth="150.0" />
+         </children>
+      </VBox>
+   </children>
+</HBox>
