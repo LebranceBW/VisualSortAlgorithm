@@ -1,15 +1,14 @@
 package sortAlgorithm;
 
-import application.MonitoredList;
+import entity.MonitoredList;
 
 public class QuickSort implements SortAlgorithm {
 
 	@Override
-	public void Sort(MonitoredList lst) throws Exception {
-		// TODO Auto-generated method stub
+	public void Sort(MonitoredList lst) {
 		assist(0, lst.size(), lst);
 	}
-	public static void assist(int index1, int index2, MonitoredList lst) throws Exception
+	public static void assist(int index1, int index2, MonitoredList lst)
 	{
 		if(index1 == index2)
 			return;
@@ -19,10 +18,8 @@ public class QuickSort implements SortAlgorithm {
 			if(lst.get(i) < anchor)
 			{
 				lst.Swap(++j, i);
-				Thread.sleep(100);
 			}
 		lst.Swap(index1, j);
-		Thread.sleep(100);
 		assist(index1, j, lst);
 		assist(j+1, index2, lst);
 	}

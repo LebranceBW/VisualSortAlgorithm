@@ -1,7 +1,7 @@
 package sortAlgorithm;
 
-import application.MonitoredList;
+import entity.MonitoredList;
 
 public interface SortAlgorithm {
-	public void Sort(MonitoredList lst) throws Exception;
+	public void Sort(MonitoredList lst);
 }

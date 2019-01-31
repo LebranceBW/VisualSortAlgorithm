@@ -25,7 +25,7 @@
                   <ComboBox fx:id="Algorithm_selection" prefWidth="150.0" promptText="--请选择排序算法--" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <HBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <TextField fx:id="rateInput" prefHeight="23.0" prefWidth="58.0" promptText="刷新率" />
+                        <TextField fx:id="rateInput" prefHeight="23.0" prefWidth="58.0" promptText="刷新率" text="30" />
                         <Label alignment="CENTER" contentDisplay="CENTER" text="fps" />
                      </children>
                      <padding>
@@ -33,7 +33,7 @@
                      </padding>
                   </HBox>
                   <Button fx:id="playBtn" mnemonicParsing="false" text="开始" />
-                  <Button mnemonicParsing="false" text="停止" />
+                  <Button fx:id="stopBtn" mnemonicParsing="false" text="停止" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

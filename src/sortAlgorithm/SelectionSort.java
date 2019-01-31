@@ -1,11 +1,11 @@
 package sortAlgorithm;
 
-import application.MonitoredList;
+import entity.MonitoredList;
 
 public class SelectionSort implements SortAlgorithm {
 
 	@Override
-	public void Sort(MonitoredList lst) throws Exception {
+	public void Sort(MonitoredList lst){
 		int size = lst.size();
 		for(int i=0;i<size;i++)
 		{
@@ -14,8 +14,7 @@ public class SelectionSort implements SortAlgorithm {
 				if(lst.get(j)<lst.get(temp))
 					temp = j;
 			lst.Swap(temp, i);
-			Thread.sleep(100);
 		}
 	}
-
+	
 }
