@@ -8,8 +8,18 @@ import sortAlgorithm.Algorithm;
 public class SortMain
 {
 	public Controller ct = null;
+	private int frameRate = 30;
 	
-	public void launch()
+	public SortMain(int rate)
+	{
+		this.frameRate = rate;
+	}
+	
+	public SortMain()
+	{
+		
+	}
+	public void launch(AlgorithmType alg)
 	{
 		MonitoredList lst = new MonitoredList();
 		Random rd = new Random();
@@ -31,9 +41,19 @@ public class SortMain
 				@Override
 				protected Void call() throws Exception {
 					// 可视化的冒泡算法
-					Algorithm.bubbleSortAlgorithm(lst);
-//					Algorithm.selectSortAlgorithm(lst);
-//					Algorithm.quickSortAlgorithm(lst);
+					Thread.sleep(20);
+					switch (alg) {
+					case QuickSort:
+						Algorithm.quickSortAlgorithm(lst);
+						break;
+					case BubbleSort:
+						Algorithm.bubbleSortAlgorithm(lst);
+						break;
+					case SelectionSort:
+						Algorithm.selectSortAlgorithm(lst);
+					default:
+						break;
+					}
 					return null;
 				}
 			};

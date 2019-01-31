@@ -13,7 +13,7 @@ public class Algorithm
 				if(lst.get(j)>lst.get(j+1))
 					{
 						lst.Swap(j, j+1);
-						Thread.sleep(50);
+						Thread.sleep(1000/30);
 					}
 		
 	}
@@ -28,7 +28,7 @@ public class Algorithm
 				if(lst.get(j)<lst.get(temp))
 					temp = j;
 			lst.Swap(temp, i);
-			Thread.sleep(50);
+			Thread.sleep(1000/30);
 		}
 	}
 	
@@ -47,10 +47,10 @@ public class Algorithm
 			if(lst.get(i) < anchor)
 			{
 				lst.Swap(++j, i);
-				Thread.sleep(50);
+				Thread.sleep(20);
 			}
 		lst.Swap(index1, j);
-		Thread.sleep(50);
+		Thread.sleep(1000/30);
 		assist(index1, j, lst);
 		assist(j+1, index2, lst);
 	}

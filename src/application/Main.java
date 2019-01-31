@@ -4,6 +4,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
@@ -15,10 +16,9 @@ public class Main extends Application {
 			FXMLLoader a = new FXMLLoader(getClass().getResource("/resources/MainView.fxml"));
 			Parent root = a.load();
 			primaryStage.setScene(new Scene(root));
+			primaryStage.initStyle(StageStyle.UNDECORATED);
 			primaryStage.show();
-			SortMain sm = new SortMain();
-			sm.ct = a.getController();
-			sm.launch();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
