@@ -1,0 +1,27 @@
+.button
+{
+	-fx-background-color: #eff3f6;
+    -fx-text-fill: #24292e;
+    -fx-font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    -fx-font-size: 12px;
+    -fx-graphic-text-gap: 10px;
+    -fx-content-display: left;
+}
+
+.combo-box
+{
+	-fx-background-color: #eff3f6;
+    -fx-text-fill: #24292e;
+    -fx-font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    -fx-font-size: 12px;
+    -fx-graphic-text-gap: 4px;
+    -fx-content-display: left;    -fx-text-fill: #24292e;
+}
+
+.text-field
+{
+	-fx-background-color: #fff;
+    -fx-background-position: right 8px center;
+    -fx-background-repeat: no-repeat;
+    -fx-border-radius: 3px;
+}

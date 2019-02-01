@@ -48,87 +48,116 @@ public class Controller implements Initializable {
     private canvasUpdateService s = null;
     
     private List<Integer> backupList = null;
+    private MonitoredList mlist = null;
     private int counts = 0;
+	private long sysDate = System.currentTimeMillis();
     
-    public MonitoredList generateList()
+    public void generateList()
     {
-    	MonitoredList lst = new MonitoredList();
+    	mlist = new MonitoredList();
 		backupList = new ArrayList<>();
-		Random rd = new Random();
+		Random rd = new Random(System.currentTimeMillis());
 		final int size = 100;
 		// 将1~size加入数组
 		for(int i = 0;i < size;i++)
-			lst.add(i+1);
+			mlist.add(i+1);
 		// 打乱顺序
 		for(int i=size;i>0;i--)
-			lst.Swap(rd.nextInt(i), i-1);
+			mlist.Swap(rd.nextInt(i), i-1);
 		for(int i=0;i<size;i++)
-			backupList.add(lst.get(i));
-		return lst;
+			backupList.add(mlist.get(i));
     }
     
+    private void changeState(MachineState nextState)
+    {
+    	switch(nextState)
+    	{
+    		case InitState:
+    		{
+    			generateList();
+				counts = 0;
+				CanvasDraw.clearCanvas(canvas);
+    			CanvasDraw.associateWithList(canvas, backupList);
+    			CanvasDraw.draw(this.canvas, backupList);
+    			playBtn.setDisable(false);
+    			Algorithm_selection.setDisable(false);
+    			rateInput.setDisable(false);
+    			stopBtn.setDisable(false);
+				SwapOperationQueue.clear();
+    			break;
+    		}
+    		case RunningState:
+    		{
+    			int rate = 60;
+    			/* 获取刷新率  */
+    			try
+    			{
+    				rate = Integer.valueOf(rateInput.getText());
+    				if(!(rate > 0 && rate <= 90))
+    					rate = 60;
+    			}
+    			catch (NumberFormatException e2) {
+    				rate  = 60;
+    			}
+    			rateInput.setText(String.valueOf(rate));
+    			/* 关闭按键响应 */
+    			playBtn.setDisable(true);
+    			rateInput.setDisable(true);
+    			
+    			SortAlgorithmFactory.assemble(this.Algorithm_selection.getSelectionModel().getSelectedItem()).Sort(mlist);
+    			
+    			s = new canvasUpdateService(SwapOperationQueue.getIterator());
+    			s.setPeriod(new Duration(1000.0 / rate));
+    			s.setOnSucceeded(e2 -> {
+    				SwapOperation swo = (SwapOperation) e2.getSource().getValue();
+    				if(swo != null)
+    				{
+    						counts++;
+    						long curDate = System.currentTimeMillis();
+    						int frameRate = (int) (1000/(curDate - sysDate));
+    						sysDate = curDate;
+    						
+    						backupList.set(swo.previousIndex, swo.previousNumber);
+    						backupList.set(swo.afterIndex, swo.afterNumber);
+    						CanvasDraw.clearCanvas(canvas);
+    						CanvasDraw.draw(canvas, backupList);
+    						CanvasDraw.drawColumn(canvas, swo.previousIndex, swo.previousNumber, Color.valueOf("#FF8100"));
+    						CanvasDraw.drawColumn(canvas, swo.afterIndex, swo.afterNumber, Color.valueOf("#FF8100"));
+    						CanvasDraw.printInfo(canvas, counts, frameRate);
+    				}
+    			});
+    			s.start();
+    			break;
+    			
+    		}
+    		case StopState:
+    		{
+    			s.cancel();
+    			break;
+    		}
+    	}
+    }
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		this.changeState(MachineState.InitState);
 		quickBtn.setOnMouseClicked(e -> Platform.exit());
 		this.Algorithm_selection.getItems().addAll(
+			AlgorithmType.SelectionSort,
 			AlgorithmType.BubbleSort,
-			AlgorithmType.QuickSort,
-			AlgorithmType.SelectionSort
+			AlgorithmType.QuickSort
 				);
 		this.Algorithm_selection.getSelectionModel().selectFirst();
 		
 		this.playBtn.setOnMouseClicked(e->
 		{
-			int rate = 30;
-			/* 获取刷新率  */
-			try
-			{
-				rate = Integer.valueOf(rateInput.getText());
-				if(!(rate > 0 && rate <= 120))
-					rate = 30;
-			}
-			catch (NumberFormatException e2) {
-				rate  = 30;
-			}
-			rateInput.setText(String.valueOf(rate));
-			/* 关闭按键响应 */
-			playBtn.setDisable(true);
-			rateInput.setDisable(true);
-			
-			
-			MonitoredList lst = generateList();
-			CanvasDraw.associateWithList(canvas, backupList);
-			CanvasDraw.draw(this.canvas, lst);
-			SortAlgorithmFactory.assemble(this.Algorithm_selection.getSelectionModel().getSelectedItem()).Sort(lst);
-			
-			s = new canvasUpdateService(SwapOperationQueue.getIterator());
-			s.setPeriod(new Duration(1000.0 / rate));
-			s.setOnSucceeded(e2 -> {
-				SwapOperation swo = (SwapOperation) e2.getSource().getValue();
-				if(swo != null)
-				{
-						counts++;
-						backupList.set(swo.previousIndex, swo.previousNumber);
-						backupList.set(swo.afterIndex, swo.afterNumber);
-						CanvasDraw.clearCanvas(canvas);
-						CanvasDraw.draw(canvas, backupList);
-						CanvasDraw.drawColumn(canvas, swo.previousIndex, swo.previousNumber, Color.valueOf("#FF8100"));
-						CanvasDraw.drawColumn(canvas, swo.afterIndex, swo.afterNumber, Color.valueOf("#FF8100"));
-						CanvasDraw.printInfo(canvas, counts);
-				}
-			});
-			s.start();
-			
+			changeState(MachineState.RunningState);
 		});
 		
 		this.stopBtn.setOnMouseClicked(e -> 
 		{
-			counts = 0;
-			playBtn.setDisable(false);
-			rateInput.setDisable(false);
-			SwapOperationQueue.clear();
-			s.cancel();
+			changeState(MachineState.InitState);
 		});
 		
 	}
@@ -149,11 +178,7 @@ public class Controller implements Initializable {
 				protected SwapOperation call() throws Exception {
 					if(it.hasNext())
 							return it.next();
-					counts = 0;
-					playBtn.setDisable(false);
-					rateInput.setDisable(false);
-					SwapOperationQueue.clear();
-					this.cancel();
+					changeState(MachineState.StopState);
 					return null;
 				}
 				
@@ -162,5 +187,10 @@ public class Controller implements Initializable {
 			
 		}
 		
+	}
+
+	enum MachineState
+	{
+		InitState, RunningState, StopState
 	}
 

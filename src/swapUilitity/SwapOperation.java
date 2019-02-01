@@ -13,4 +13,5 @@ public class SwapOperation {
 		this.afterIndex = afterIndex;
 		this.afterNumber = afterNumber;
 	}
+	
 }

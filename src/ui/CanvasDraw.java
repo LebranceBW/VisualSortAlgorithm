@@ -12,16 +12,21 @@ public class CanvasDraw {
 	
     private static double xScale;
     private static double yScale;
+    private final static double xlim = 900;
+    private final static double ylim = 600;
 	public static void associateWithList(Canvas canvas, List<Integer> backupList2)
     {
+		// 设置尺寸
+		canvas.setWidth(xlim);
+		canvas.setHeight(ylim + 40);
     	// 定标横轴刻度
     	int xRange = backupList2.size();
     	if (xRange==0)
     		return;
-    	xScale = (double)canvas.getWidth() / xRange;
+    	xScale = xlim / xRange;
     	// 定标纵轴刻度
     	int yRange = 100;
-    	yScale = (double)canvas.getHeight() / (yRange);
+    	yScale = ylim / (yRange);
     }
     public static void draw(Canvas canvas, List<Integer> lst)
     {
@@ -47,12 +52,12 @@ public class CanvasDraw {
    		gc.fillRect(index*xScale+1, canvas.getHeight() - y*yScale+1, xScale-2, y*yScale-2);
    		gc.strokeRect(index*xScale, canvas.getHeight() - y*yScale, xScale, y*yScale);
     }
-    public static void printInfo(Canvas canvas, int count)
+    public static void printInfo(Canvas canvas, int count, int frameRate)
     {
     	GraphicsContext gc = canvas.getGraphicsContext2D();
     	gc.setFill(Color.BLACK);
     	gc.setFont(new Font("Arial", 20));
     	gc.fillText(String.format("Total swap counts:%d", count), 20, 40);
-    	gc.fillText(String.format("Frame rate:%d", 30), 20, 60);
+    	gc.fillText(String.format("Frame rate:%d", frameRate), 20, 60);
     }
 }
