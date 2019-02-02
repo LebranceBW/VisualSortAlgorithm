@@ -2,11 +2,11 @@ package application;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import entity.MonitoredList;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -24,7 +24,6 @@ import sortAlgorithm.SelectionSort;
 import sortAlgorithm.ShellSort;
 import sortAlgorithm.SortAlgorithm;
 import swapUilitity.SwapOperation;
-import swapUilitity.SwapOperationQueue;
 import ui.CanvasDraw;
 
 public class Controller implements Initializable {
@@ -47,27 +46,27 @@ public class Controller implements Initializable {
     @FXML
     private Button stopBtn;
 
-    private canvasUpdateService s = null;
     
-    private List<Integer> backupList = null;
-    private MonitoredList mlist = null;
+    private List<Integer> toSortedList = null;
     private int counts = 0;
-	private long sysDate = System.currentTimeMillis();
+//	private long sysDate = System.currentTimeMillis();
+//    private AnimationTimer at = null;
+    private ScheduledService<Void> s = null;
     
     public void generateList()
     {
-    	mlist = new MonitoredList();
-		backupList = new ArrayList<>();
+    	toSortedList = new ArrayList<Integer>();
 		Random rd = new Random(System.currentTimeMillis());
 		final int size = 100;
-		// ��1~size��������
 		for(int i = 0;i < size;i++)
-			mlist.add(i+1);
-		// ����˳��
+			toSortedList.add(i+1);
 		for(int i=size;i>0;i--)
-			mlist.Swap(rd.nextInt(i), i-1);
-		for(int i=0;i<size;i++)
-			backupList.add(mlist.get(i));
+		{
+			int randIndex = rd.nextInt(i);
+			int temp = toSortedList.get(randIndex);
+			toSortedList.set(randIndex, toSortedList.get(i-1));
+			toSortedList.set(i-1, temp);
+		}
     }
     
     private void changeState(MachineState nextState)
@@ -79,13 +78,12 @@ public class Controller implements Initializable {
     			generateList();
 				counts = 0;
 				CanvasDraw.clearCanvas(canvas);
-    			CanvasDraw.associateWithList(canvas, backupList);
-    			CanvasDraw.draw(this.canvas, backupList);
+    			CanvasDraw.associateWithList(canvas, toSortedList);
+    			CanvasDraw.draw(this.canvas, toSortedList);
     			playBtn.setDisable(false);
     			Algorithm_selection.setDisable(false);
     			rateInput.setDisable(false);
     			stopBtn.setDisable(false);
-				SwapOperationQueue.clear();
     			break;
     		}
     		case RunningState:
@@ -103,35 +101,48 @@ public class Controller implements Initializable {
     			rateInput.setText(String.valueOf(rate));
     			playBtn.setDisable(true);
     			rateInput.setDisable(true);
+    			stopBtn.setDisable(true);
     			
-    			this.Algorithm_selection.getSelectionModel().getSelectedItem().Sort(mlist);
-    			
-    			s = new canvasUpdateService();
-    			s.setPeriod(new Duration(1000.0 / rate));
-    			s.setOnSucceeded(e2 -> {
-    				SwapOperation swo = (SwapOperation) e2.getSource().getValue();
-    				if(swo != null)
-    				{
-    						counts++;
-    						long curDate = System.currentTimeMillis();
-    						int frameRate = (int) (1000/(curDate - sysDate));
-    						sysDate = curDate;
-    						
-    						backupList.set(swo.previousIndex, swo.previousNumber);
-    						backupList.set(swo.afterIndex, swo.afterNumber);
-    						CanvasDraw.clearCanvas(canvas);
-    						CanvasDraw.draw(canvas, backupList);
-    						CanvasDraw.drawColumn(canvas, swo.previousIndex, swo.previousNumber, Color.valueOf("#FF8100"));
-    						CanvasDraw.drawColumn(canvas, swo.afterIndex, swo.afterNumber, Color.valueOf("#FF8100"));
-    						CanvasDraw.printInfo(canvas, counts, frameRate);
-    				}
-    			});
-    			s.start();
+    			Deque<SwapOperation> opreations = this.Algorithm_selection.getSelectionModel().getSelectedItem().recordedSort(toSortedList);
+    
+    			s = new ScheduledService<Void>() {
+					private long lastTime = 0;
+					@Override
+					protected Task<Void> createTask() {
+						return new Task<Void>() {
+
+							@Override
+							protected Void call() throws Exception {
+								long now = System.currentTimeMillis();
+								if(!opreations.isEmpty())
+								{
+									SwapOperation swo = opreations.poll();
+		    						counts++;
+		    						int frameRate = (int) (1e3 / (now - lastTime));
+		    						lastTime = now;
+		    						toSortedList.set(swo.previousIndex, swo.previousNumber);
+		    						toSortedList.set(swo.afterIndex, swo.afterNumber);
+		    						CanvasDraw.clearCanvas(canvas);
+		    						CanvasDraw.draw(canvas, toSortedList);
+		    						CanvasDraw.drawColumn(canvas, swo.previousIndex, swo.previousNumber, Color.valueOf("#FF8100"));
+		    						CanvasDraw.drawColumn(canvas, swo.afterIndex, swo.afterNumber, Color.valueOf("#FF8100"));
+		    						CanvasDraw.printInfo(canvas, counts, frameRate);
+								}
+								else
+									changeState(MachineState.StopState);
+								return null;
+							}
+						};
+					}
+				};
+				s.setPeriod(new Duration(1e3 / rate));
+				s.start();
     			break;
     			
     		}
     		case StopState:
     		{
+    			stopBtn.setDisable(false);
     			s.cancel();
     			break;
     		}
@@ -162,40 +173,30 @@ public class Controller implements Initializable {
 		});
 		
 	}
-	
-	class canvasUpdateService extends ScheduledService<SwapOperation>
-	{
-//		private Iterator<SwapOperation> it = null;
-//		public canvasUpdateService(Iterator<SwapOperation> it)
-//		{
-//			this.it = it;
+////	
+//	class canvasUpdateService extends ScheduledService<Void>
+//	{
+//		private Deque<SwapOperation> q;
+//
+//		public canvasUpdateService(Deque<SwapOperation> q) {
+//			this.q = q;
 //		}
-		
-		@Override
-		protected Task<SwapOperation> createTask() {
-			return new Task<SwapOperation>() {
-
-				@Override
-				protected SwapOperation call() throws Exception {
-//					if(it.hasNext())
-//							return it.next();
-//					changeState(MachineState.StopState);
+//		protected Task<Void> createTask() {
+//			return new Task<Void>() {
+//
+//				@Override
+//				protected Void call() throws Exception {
 //					return null;
-					if(!SwapOperationQueue.isEmpty())
-						return SwapOperationQueue.poll();
-					changeState(MachineState.StopState);
-					return null;
-				}
-				
-			};
-		}
-			
-		}
-		
-	}
+//				}
+//				
+//			};
+//		}
+//		
+//	}
 
 	enum MachineState
 	{
 		InitState, RunningState, StopState
 	}
+}
 

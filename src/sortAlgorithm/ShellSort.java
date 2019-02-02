@@ -2,7 +2,7 @@ package sortAlgorithm;
 
 import entity.MonitoredList;
 
-public class ShellSort implements SortAlgorithm {
+public class ShellSort extends SortAlgorithm {
 
 	@Override
 	public void Sort(MonitoredList lst) {
