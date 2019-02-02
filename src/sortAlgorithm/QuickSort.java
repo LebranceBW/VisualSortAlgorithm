@@ -24,4 +24,9 @@ public class QuickSort implements SortAlgorithm {
 		assist(j+1, index2, lst);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "¿ìËÙÅÅĞò";
+	}
 }

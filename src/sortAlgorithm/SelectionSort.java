@@ -17,4 +17,9 @@ public class SelectionSort implements SortAlgorithm {
 		}
 	}
 	
+	@Override
+	public String toString()
+	{
+		return "—°‘Ò≈≈–Ú";
+	}
 }

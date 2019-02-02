@@ -2,12 +2,10 @@ package application;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import entity.AlgorithmType;
 import entity.MonitoredList;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
@@ -20,7 +18,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import sortAlgorithm.SortAlgorithmFactory;
+import sortAlgorithm.InsertionSort;
+import sortAlgorithm.QuickSort;
+import sortAlgorithm.SelectionSort;
+import sortAlgorithm.ShellSort;
+import sortAlgorithm.SortAlgorithm;
 import swapUilitity.SwapOperation;
 import swapUilitity.SwapOperationQueue;
 import ui.CanvasDraw;
@@ -31,10 +33,10 @@ public class Controller implements Initializable {
     private Canvas canvas;
 
     @FXML
-    private Button quickBtn;
+    private Button quitBtn;
 
     @FXML
-    private ComboBox<AlgorithmType> Algorithm_selection;
+    private ComboBox<SortAlgorithm> Algorithm_selection;
     
     @FXML
     private Button playBtn;
@@ -58,10 +60,10 @@ public class Controller implements Initializable {
 		backupList = new ArrayList<>();
 		Random rd = new Random(System.currentTimeMillis());
 		final int size = 100;
-		// ½«1~size¼ÓÈëÊý×é
+		// ï¿½ï¿½1~sizeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for(int i = 0;i < size;i++)
 			mlist.add(i+1);
-		// ´òÂÒË³Ðò
+		// ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½
 		for(int i=size;i>0;i--)
 			mlist.Swap(rd.nextInt(i), i-1);
 		for(int i=0;i<size;i++)
@@ -89,7 +91,6 @@ public class Controller implements Initializable {
     		case RunningState:
     		{
     			int rate = 60;
-    			/* »ñÈ¡Ë¢ÐÂÂÊ  */
     			try
     			{
     				rate = Integer.valueOf(rateInput.getText());
@@ -100,13 +101,12 @@ public class Controller implements Initializable {
     				rate  = 60;
     			}
     			rateInput.setText(String.valueOf(rate));
-    			/* ¹Ø±Õ°´¼üÏìÓ¦ */
     			playBtn.setDisable(true);
     			rateInput.setDisable(true);
     			
-    			SortAlgorithmFactory.assemble(this.Algorithm_selection.getSelectionModel().getSelectedItem()).Sort(mlist);
+    			this.Algorithm_selection.getSelectionModel().getSelectedItem().Sort(mlist);
     			
-    			s = new canvasUpdateService(SwapOperationQueue.getIterator());
+    			s = new canvasUpdateService();
     			s.setPeriod(new Duration(1000.0 / rate));
     			s.setOnSucceeded(e2 -> {
     				SwapOperation swo = (SwapOperation) e2.getSource().getValue();
@@ -142,11 +142,12 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		this.changeState(MachineState.InitState);
-		quickBtn.setOnMouseClicked(e -> Platform.exit());
+		quitBtn.setOnMouseClicked(e -> Platform.exit());
 		this.Algorithm_selection.getItems().addAll(
-			AlgorithmType.SelectionSort,
-			AlgorithmType.BubbleSort,
-			AlgorithmType.QuickSort
+				new QuickSort(),
+				new InsertionSort(),
+				new SelectionSort(),
+				new ShellSort()
 				);
 		this.Algorithm_selection.getSelectionModel().selectFirst();
 		
@@ -164,11 +165,11 @@ public class Controller implements Initializable {
 	
 	class canvasUpdateService extends ScheduledService<SwapOperation>
 	{
-		private Iterator<SwapOperation> it = null;
-		public canvasUpdateService(Iterator<SwapOperation> it)
-		{
-			this.it = it;
-		}
+//		private Iterator<SwapOperation> it = null;
+//		public canvasUpdateService(Iterator<SwapOperation> it)
+//		{
+//			this.it = it;
+//		}
 		
 		@Override
 		protected Task<SwapOperation> createTask() {
@@ -176,8 +177,12 @@ public class Controller implements Initializable {
 
 				@Override
 				protected SwapOperation call() throws Exception {
-					if(it.hasNext())
-							return it.next();
+//					if(it.hasNext())
+//							return it.next();
+//					changeState(MachineState.StopState);
+//					return null;
+					if(!SwapOperationQueue.isEmpty())
+						return SwapOperationQueue.poll();
 					changeState(MachineState.StopState);
 					return null;
 				}

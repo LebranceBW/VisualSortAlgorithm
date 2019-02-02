@@ -1,7 +1,6 @@
 package swapUilitity;
 
 import java.util.ArrayDeque;
-import java.util.Iterator;
 
 public class SwapOperationQueue{
 	private static ArrayDeque<SwapOperation> queue = new ArrayDeque<>(10000);
@@ -15,12 +14,14 @@ public class SwapOperationQueue{
 		return queue.poll();
 	}
 	
+	public static boolean isEmpty()
+	{
+		return queue.isEmpty();
+	}
+	
 	public static void clear()
 	{
 		queue.clear();
 	}
 	
-	public static Iterator<SwapOperation> getIterator() {
-		return queue.iterator();
-	}
 }

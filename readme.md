@@ -1,11 +1,11 @@
 # 可视化的排序算法
 
-利用JavaFx实现的。以下是三种排序算法的可视化展示。
+利用JavaFx实现的多种排序算法的动画演示（除了归并）。
 下载:  
-[jar包]("./releases/download/1.0/Visual.Sort.jar")  
-[zip压缩包]("./releases/download/1.0/Visual.Sort.zip")
+[jar包]("./releases/download/release1.0/Visual.Sort.jar")  
+[7z压缩包]("./releases/download/release1.0/Visual.Sort.7z")
 
---------
+-------
 
 ### 1.1 快速排序
 
