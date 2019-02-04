@@ -18,6 +18,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import sortAlgorithm.HeapSort;
 import sortAlgorithm.InsertionSort;
 import sortAlgorithm.QuickSort;
 import sortAlgorithm.SelectionSort;
@@ -49,8 +50,6 @@ public class Controller implements Initializable {
     
     private List<Integer> toSortedList = null;
     private int counts = 0;
-//	private long sysDate = System.currentTimeMillis();
-//    private AnimationTimer at = null;
     private ScheduledService<Void> s = null;
     
     public void generateList()
@@ -158,7 +157,8 @@ public class Controller implements Initializable {
 				new QuickSort(),
 				new InsertionSort(),
 				new SelectionSort(),
-				new ShellSort()
+				new ShellSort(),
+				new HeapSort()
 				);
 		this.Algorithm_selection.getSelectionModel().selectFirst();
 		
@@ -173,26 +173,6 @@ public class Controller implements Initializable {
 		});
 		
 	}
-////	
-//	class canvasUpdateService extends ScheduledService<Void>
-//	{
-//		private Deque<SwapOperation> q;
-//
-//		public canvasUpdateService(Deque<SwapOperation> q) {
-//			this.q = q;
-//		}
-//		protected Task<Void> createTask() {
-//			return new Task<Void>() {
-//
-//				@Override
-//				protected Void call() throws Exception {
-//					return null;
-//				}
-//				
-//			};
-//		}
-//		
-//	}
 
 	enum MachineState
 	{
