@@ -8,6 +8,15 @@
     -fx-content-display: left;
 }
 
+.button:hover
+{
+	-fx-background-color: #adc2d1
+}
+
+.button:pressed
+{
+	-fx-background-color: #9eb5c7
+}
 .combo-box
 {
 	-fx-background-color: #eff3f6;
@@ -16,6 +25,11 @@
     -fx-font-size: 12px;
     -fx-graphic-text-gap: 4px;
     -fx-content-display: left;    -fx-text-fill: #24292e;
+}
+
+.combo-box:hover
+{
+	-fx-background-color: #adc2d1
 }
 
 .text-field
