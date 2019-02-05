@@ -1,8 +1,6 @@
 # 可视化的排序算法
 
 利用JavaFx实现的原地排序算法的动画演示（除了归并）。
-下载:  
-[Release]("https://github.com/LebranceBW/VisualSortAlgorithm/releases")  
 
 -------
 
