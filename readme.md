@@ -2,7 +2,7 @@
 
 利用JavaFx实现的原地排序算法的动画演示（除了归并）。
 下载:  
-[jar包]("https://github.com/LebranceBW/VisualSortAlgorithm/releases/download/untagged-6106647b6ee34d9046bb/VisualSort.jar")  
+[Release]("https://github.com/LebranceBW/VisualSortAlgorithm/releases")  
 
 -------
 
